@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssm.blog.dao.MenuDao">
+	<resultMap type="ssm.blog.pojo.Menu" id="menuResult">
+		<id column="id" property="id" />
+		<result column="menuName" property="menuName" />
+		<result column="menuUrl" property="menuUrl" />
+		<result column="isLeaf" property="isLeaf" />
+		<result column="parentId" property="parentId" />
+		<result column="status" property="status" />
+		<result column="sort" property="sort" />
+	</resultMap>
+	<insert id="addMenu" parameterType="ssm.blog.pojo.Menu"
+		keyProperty="id" useGeneratedKeys="true">
+		insert into t_menu
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			menuName,
+			<if test="menuUrl != null and menuUrl!=''">
+				menuUrl,
+			</if>
+			isLeaf,parentId,status,sort
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{menuName,jdbcType=INTEGER},
+			<if test="menuUrl != null and menuUrl!=''">
+				#{menuUrl, jdbcType=VARCHAR},
+			</if>
+			#{isLeaf,jdbcType=BIT},
+			#{parentId,jdbcType=INTEGER},
+			#{status,jdbcType=BIT},
+			#{sort,jdbcType=INTEGER}
+		</trim>
+	</insert>
+	<delete id="deleteMenu" parameterType="java.lang.Integer">
+		update t_menu set status=FALSE where id=#{id}
+	</delete>
+	<update id="updateMenu" parameterType="ssm.blog.pojo.Menu">
+		update t_menu set menuName=#{menuName},
+		<if test="menuUrl != null and menuUrl!=''">
+			menuUrl = #{menuUrl},
+		</if>
+		isLeaf=#{isLeaf},parentId=#{parentId},status=#{status},sort=#{sort} where id=#{id}
+	</update>
+	<select id="getMenuById" parameterType="java.lang.Integer"
+		resultType="ssm.blog.pojo.Menu">
+		SELECT id,menuName,menuUrl,isLeaf,parentId,status,sort from
+		db_blog.t_menu where status='1'
+		and id = #{id}
+	</select>
+	<select id="getNotLeafMenu" resultType="ssm.blog.pojo.Menu">
+		SELECT id,menuName,menuUrl,isLeaf,parentId,status,sort from
+		db_blog.t_menu where status='1' and isLeaf='0'
+	</select>
+	<select id="listByPage" resultMap="menuResult">
+		SELECT id,menuName,menuUrl,isLeaf,parentId,status,sort from db_blog.t_menu
+		where status='1'
+		limit #{start} ,#{end}
+	</select>
+	<select id="getTotal" resultType="java.lang.Long">
+		SELECT COUNT(id) from db_blog.t_menu where status='1'
+	</select>
+</mapper>

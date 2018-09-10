@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper实现的接口的路径(包名+接口名)-->
+<mapper namespace="ssm.blog.dao.UserDao">
+    <!-- 返回结果映射 type使用mybatis-conf中的别名 可以省略包名-->
+
+    <select id="getUserInfo" parameterType="ssm.blog.pojo.User" resultType="int">
+    	select count(1) from t_user where userName=#{userName} and password=#{password}
+    </select>
+    
+    <select id="findUserByName" parameterType="String" resultType="ssm.blog.pojo.User">
+    	SELECT id,userName,userTel,password from db_blog.t_user
+            where userName = #{userName}
+    </select>
+    
+    <update id="updateUserById" parameterType="ssm.blog.pojo.User">
+    	update t_user set userName=#{userName},password=#{password},userTel=#{userTel} where id=#{id}
+    </update>
+    
+</mapper>
